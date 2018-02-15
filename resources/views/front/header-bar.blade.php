@@ -81,10 +81,10 @@
                                     <label for="currency-dropdown"> S'inscrire: </label>
                                     <select name="currency" id="currency-dropdown" onChange="location.href=''+this.options[this.selectedIndex].value;">
                                         <option value="#">en tant que...</option>
-                                        <option value="inscription-membre">Membre</option>
-                                        <option value="seller">vendeur</option>
-                                        <option value="AFA">A.F.A</option>
-                                        <option value="acceptation-APL">A.P.L</option>
+                                        <option value="{{url('/')}}/inscription-membre">Membre</option>
+                                        <option value="{{url('/')}}/seller">vendeur</option>
+                                        <option value="{{url('/')}}/AFA">A.F.A</option>
+                                        <option value="{{url('/')}}/acceptation-APL">A.P.L</option>
                                     </select>
                                 </div>
                                 <div class="currency-in-header">

@@ -17,4 +17,11 @@ class PublicitesController extends Controller
 		$this->xml_loader = xml_loader_files('publicites');
 	}
 
+	/**
+	* fonction affichage publicite par page 
+	* @param string $nom_page
+	* @return Collection Object Publicite
+	*/
+	
+
 }
