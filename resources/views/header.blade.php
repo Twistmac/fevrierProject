@@ -130,9 +130,6 @@
                         <li>
                             <a href="blog.php">BLOG</a>
                         </li>
-                        <li>
-                            <a href="#">MON COMPTE</a>
-                        </li>
                     </ul>
                 </nav>
             </div>
