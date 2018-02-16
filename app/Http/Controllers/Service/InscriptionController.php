@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\Email;
 use App\Mail\ContratEmail;
 use App\Mail\InfoCompteEmail;
+use App\Entite\Membre;
 
 class InscriptionController extends Controller
 {
@@ -217,61 +218,85 @@ class InscriptionController extends Controller
                      PersonnephysiqueController $personnephysiqueController,MembreController $membreController,
                     VendeurController $vendeurController, AfaController $afaController){
 
-      if($request->type == "APL"){
-           $localisation = $localisationController->create($request->adresse,$request->pays,
-                $request->etat,$request->ville,$request->codePostal);
-           $logoPath = $request->file('logo')->store("upload");
-           $personneMoral = $personnemoralController->create($localisation->IDLOCALISATION, $request->nom,false,"",$logoPath,
-                $request->presentationAPL, $request->telephone, $request->email,false,"",$request->operabilite,
-                $request->langue,"","","",$request->refBancaire,"","",2);
-           $apl = $aplController->create("",$personneMoral->IDPERSONNEMORALE,'','',false,date('Y-m-d'),'',false);
 
-          $request->session()->put("inscription",true);
-          $request->session()->put("type","APL");
-          $request->session()->put("entite",$apl);
-          $request->session()->put("personne",$personneMoral);
-          return response()->view("confirmation");
+        $membre =new Membre();
+
+        if($request->type == "APL"){
+            $testEmail = $membre->getLogin($request->email);
+            if($testEmail == null){
+                $localisation = $localisationController->create($request->adresse,$request->pays,
+                    $request->etat,$request->ville,$request->codePostal);
+                $logoPath = $request->file('logo')->store("upload");
+                $personneMoral = $personnemoralController->create($localisation->IDLOCALISATION, $request->nom,false,"",$logoPath,
+                    $request->presentationAPL, $request->telephone, $request->email,false,"",$request->operabilite,
+                    $request->langue,"","","",$request->refBancaire,"","",2);
+                $apl = $aplController->create("",$personneMoral->IDPERSONNEMORALE,'','',false,date('Y-m-d'),'',false);
+
+                $request->session()->put("inscription",true);
+                $request->session()->put("type","APL");
+                $request->session()->put("entite",$apl);
+                $request->session()->put("personne",$personneMoral);
+                return response()->view("confirmation");
+            }
+            else{
+                echo 'email efa misy io';
+            }
+
       }
+
       else if($request->type == "MEMBRE"){
 
           if($request->typeMembre == "Particulier"){
-              $request->session()->put("typeMembre","Particulier");
-              $localisation = $localisationController->create($request->adresseParticulier,$request->paysParticulier,$request->etatParticulier,
-                  $request->villeParticulier,$request->codePostal);
-              $avatarPath = $request->file("avatar")->store("membreParticulier");
-              $personnePhysique = $personnephysiqueController->create($localisation->IDLOCALISATION,$request->nomParticulier,
-                  $request->prenomParticulier,$avatarPath,"","",$request->genre,$request->dateNaissance,
-                  $request->emailParticulier,$request->contactParticulierSuffixe." ".$request->contactParticulierNumber,
-                  "",$request->referenceBancairePart,"","",0);
+              $testEmail = $membre->getLogin($request->emailParticulier);
+              if($testEmail == null){
+                  $request->session()->put("typeMembre","Particulier");
+                  $localisation = $localisationController->create($request->adresseParticulier,$request->paysParticulier,$request->etatParticulier,
+                      $request->villeParticulier,$request->codePostal);
+                  $avatarPath = $request->file("avatar")->store("membreParticulier");
+                  $personnePhysique = $personnephysiqueController->create($localisation->IDLOCALISATION,$request->nomParticulier,
+                      $request->prenomParticulier,$avatarPath,"","",$request->genre,$request->dateNaissance,
+                      $request->emailParticulier,$request->contactParticulierSuffixe." ".$request->contactParticulierNumber,
+                      "",$request->referenceBancairePart,"","",0);
 
-              $membre = $membreController->create("",null,$personnePhysique->IDPERSONNEPHYSIQUE,false,
-                  $this->getBooleanToInt($request->newsletterPart),$this->getBooleanToInt($request->partageDonnePart));
+                  $membre = $membreController->create("",null,$personnePhysique->IDPERSONNEPHYSIQUE,false,
+                      $this->getBooleanToInt($request->newsletterPart),$this->getBooleanToInt($request->partageDonnePart));
 
-              $request->session()->put("inscription",true);
-              $request->session()->put("type","MEMBRE");
-              $request->session()->put("typeMembre","Particulier");
-              $request->session()->put("entite",$membre);
-              $request->session()->put("personne",$personnePhysique);
-              return $this->verifieEmail($request);
+                  $request->session()->put("inscription",true);
+                  $request->session()->put("type","MEMBRE");
+                  $request->session()->put("typeMembre","Particulier");
+                  $request->session()->put("entite",$membre);
+                  $request->session()->put("personne",$personnePhysique);
+                  return $this->verifieEmail($request);
+              }
+              else{
+                  echo 'efa misy io email io';
+              }
 
           }
           else if($request->typeMembre == "Organisation"){
-              $localisation = $localisationController->create($request->adresseOrg,$request->paysOrg,$request->etatOrg,
-                  $request->villeOrg,$request->codePostalOrg);
-              $logoPath = $request->file("logo")->store("upload");
-              $personneMoral = $personnemoralController->create($localisation->IDLOCALISATION,$request->nomOrg,$this->getBooleanToInt(false),"",
-                  $logoPath, $request->presentationOrg,$request->prefixPhone." ".$request->phoneNumber, $request->emailOrg ,
-                  false,"",0,$request->langOrg,"","", ""
-                   ,$request->refBankOrg,"","",0);
-              $membre = $membreController->create("",$personneMoral->IDPERSONNEMORALE,null,false,
-                  $this->getBooleanToInt($request->newsletterOrg),$this->getBooleanToInt($request->partageDonneOrg));
+              $testEmail = $membre->getLogin($request->emailOrg);
+              if($testEmail == null){
+                  $localisation = $localisationController->create($request->adresseOrg,$request->paysOrg,$request->etatOrg,
+                      $request->villeOrg,$request->codePostalOrg);
+                  $logoPath = $request->file("logo")->store("upload");
+                  $personneMoral = $personnemoralController->create($localisation->IDLOCALISATION,$request->nomOrg,$this->getBooleanToInt(false),"",
+                      $logoPath, $request->presentationOrg,$request->prefixPhone." ".$request->phoneNumber, $request->emailOrg ,
+                      false,"",0,$request->langOrg,"","", ""
+                      ,$request->refBankOrg,"","",0);
+                  $membre = $membreController->create("",$personneMoral->IDPERSONNEMORALE,null,false,
+                      $this->getBooleanToInt($request->newsletterOrg),$this->getBooleanToInt($request->partageDonneOrg));
 
-              $request->session()->put("inscription",true);
-              $request->session()->put("type","MEMBRE");
-              $request->session()->put("typeMembre","Organisation");
-              $request->session()->put("entite",$membre);
-              $request->session()->put("personne",$personneMoral);
-              return $this->verifieEmail($request);
+                  $request->session()->put("inscription",true);
+                  $request->session()->put("type","MEMBRE");
+                  $request->session()->put("typeMembre","Organisation");
+                  $request->session()->put("entite",$membre);
+                  $request->session()->put("personne",$personneMoral);
+                  return $this->verifieEmail($request);
+              }
+              else{
+                  echo 'efa misy io mail';
+              }
+
           }
       }
       else if($request->type == "Vendeur"){

@@ -1,4 +1,6 @@
-@include("header")
+@php
+    affichageHeader();
+@endphp
 <div class="main-slider-wrapper clearfix content corps ">
     <div>
         <div class="container">
@@ -7,11 +9,6 @@
                     <div id="content">
                         <div role="main">
                             <div id="breadcrumbs" class="group font-size-14">
-                                <div class="breadcrumb">
-                                    <a href="https://www.propertyhq.com.au/">Accueil</a>
-                                    <span class="aquo">&gt;</span> Agence Partenaire Local –  Créer un compte automatisé
-                                    <span class="aquo">&gt;</span> Confirmation par email
-                                </div>
                             </div>
                         <div>
                         <h3 class="page-title aligncenter"><?php echo $titre; ?></h3>
